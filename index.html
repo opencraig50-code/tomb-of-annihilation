@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tomb of Annihilation – Campaign Notes</title>
+  <style>
+    :root {
+      --bg: #0e0e14;
+      --surface: #16161f;
+      --surface2: #1e1e2e;
+      --border: #2a2a3d;
+      --accent: #c0a060;
+      --accent2: #7a5c28;
+      --text: #cdd6f4;
+      --muted: #888aaa;
+      --green: #a6e3a1;
+      --red: #f38ba8;
+      --blue: #89b4fa;
+      --purple: #cba6f7;
+      --yellow: #f9e2af;
+      --teal: #94e2d5;
+      --orange: #fab387;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a0a00, #2a1400, #1a0a00);
+      border-bottom: 2px solid var(--accent2);
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(192,160,96,0.4);
+      letter-spacing: 0.05em;
+    }
+    .header .skull { font-size: 2rem; }
+    .header .subtitle { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+    .header a { color: var(--muted); text-decoration: none; font-size: 0.85rem; margin-left: auto; }
+    .header a:hover { color: var(--accent); }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    nav a:hover, nav a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h3 {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p, .card li { color: var(--text); font-size: 0.9rem; }
+    .card ul, .card ol { padding-left: 20px; }
+    .card li { margin-bottom: 4px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    /* PC Cards */
+    .pc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+    }
+    .pc-card .pc-name { font-size: 1.1rem; color: var(--accent); font-weight: bold; }
+    .pc-card .pc-player { color: var(--muted); font-size: 0.82rem; margin-bottom: 8px; }
+    .pc-card .pc-class { color: var(--blue); font-size: 0.88rem; margin-bottom: 4px; }
+    .pc-card .pc-alignment { font-size: 0.82rem; margin-bottom: 12px; }
+    .pc-card .tag {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 2px;
+    }
+    .pc-card .tag.item { border-color: var(--accent2); color: var(--yellow); }
+    .pc-card .tag.ability { border-color: #4a4a6a; color: var(--purple); }
+    .pc-card section { margin-top: 12px; }
+    .pc-card section h4 { font-size: 0.8rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 6px; }
+    .pc-card p { font-size: 0.88rem; color: var(--text); }
+
+    /* Session list */
+    .session {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .session-header {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .session-header:hover { background: var(--surface2); }
+    .session-num {
+      background: var(--accent2);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      min-width: 60px;
+      text-align: center;
+    }
+    .session-title { color: var(--text); font-size: 0.92rem; flex: 1; }
+    .session-date { color: var(--muted); font-size: 0.8rem; }
+    .session-arrow { color: var(--muted); transition: transform 0.2s; }
+    .session.open .session-arrow { transform: rotate(90deg); }
+    .session-body { display: none; padding: 0 20px 16px; font-size: 0.88rem; border-top: 1px solid var(--border); }
+    .session.open .session-body { display: block; }
+    .session-body p { margin-top: 10px; }
+    .session-body ul { padding-left: 20px; margin-top: 6px; }
+    .session-body li { margin-bottom: 4px; }
+    .session-body .highlight { color: var(--yellow); font-weight: 500; }
+    .session-body .danger { color: var(--red); }
+    .session-body .loot { color: var(--green); }
+
+    /* NPC table */
+    .npc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .npc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .npc-card .npc-name { color: var(--blue); font-weight: bold; font-size: 0.95rem; }
+    .npc-card .npc-role { color: var(--muted); font-size: 0.78rem; margin-bottom: 6px; }
+    .npc-card p { font-size: 0.85rem; }
+    .npc-card.ally { border-left: 3px solid var(--green); }
+    .npc-card.enemy { border-left: 3px solid var(--red); }
+    .npc-card.neutral { border-left: 3px solid var(--muted); }
+    .npc-card.dead { border-left: 3px solid #555; opacity: 0.7; }
+
+    /* Lore */
+    .lore-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .lore-block h3 { color: var(--purple); font-size: 0.95rem; margin-bottom: 8px; }
+    .lore-block p, .lore-block li { font-size: 0.88rem; }
+    .lore-block ul { padding-left: 20px; margin-top: 6px; }
+
+    /* Status bar */
+    .status-bar {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .status-item { display: flex; flex-direction: column; gap: 2px; }
+    .status-label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; }
+    .status-value { font-size: 1rem; color: var(--accent); font-weight: bold; }
+
+    /* Inventory */
+    .inv-section { margin-bottom: 20px; }
+    .inv-section h3 { color: var(--yellow); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .inv-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.87rem; }
+    .inv-item:last-child { border-bottom: none; }
+    .inv-item .owner { color: var(--muted); font-size: 0.78rem; min-width: 60px; }
+    .inv-item .item-name { color: var(--green); font-weight: 500; flex: 1; }
+    .inv-item .item-desc { color: var(--text); flex: 2; }
+
+    h2.section-title {
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+    .badge-red { background: rgba(243,139,168,0.15); color: var(--red); border: 1px solid var(--red); }
+    .badge-green { background: rgba(166,227,161,0.15); color: var(--green); border: 1px solid var(--green); }
+    .badge-yellow { background: rgba(249,226,175,0.15); color: var(--yellow); border: 1px solid var(--yellow); }
+    .badge-blue { background: rgba(137,180,250,0.15); color: var(--blue); border: 1px solid var(--blue); }
+    .badge-purple { background: rgba(203,166,247,0.15); color: var(--purple); border: 1px solid var(--purple); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="skull">💀</span>
+  <div>
+    <h1>Tomb of Annihilation</h1>
+    <div class="subtitle">Campaign Notes — Synthesized from Dave &amp; Scott's notes</div>
+  </div>
+  <a href="/">← Dashboard</a>
+</div>
+
+<nav>
+  <a href="#" class="active" data-section="overview">Overview</a>
+  <a href="#" data-section="characters">Characters</a>
+  <a href="#" data-section="sessions">Sessions</a>
+  <a href="#" data-section="npcs">NPCs</a>
+  <a href="#" data-section="lore">Lore &amp; Factions</a>
+  <a href="#" data-section="inventory">Inventory</a>
+</nav>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section active">
+    <h2 class="section-title">Campaign Overview</h2>
+    <div class="status-bar">
+      <div class="status-item"><div class="status-label">Party Level</div><div class="status-value">6</div></div>
+      <div class="status-item"><div class="status-label">Sessions Played</div><div class="status-value">25</div></div>
+      <div class="status-item"><div class="status-label">Location</div><div class="status-value">Chult — Heading South</div></div>
+      <div class="status-item"><div class="status-label">Main Threat</div><div class="status-value">The Soul Monger</div></div>
+      <div class="status-item"><div class="status-label">Active Quest</div><div class="status-value">Find the City of Omu</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🎯 Current Objective</h3>
+        <ul>
+          <li>Find the ancient city of <strong>Omu</strong> — hidden somewhere to the south, visible only from high ground</li>
+          <li>Locate and destroy the <strong>Soul Monger</strong> artifact before Syndra and all raised-dead people die from the Death Curse</li>
+          <li>Defeat <strong>Ras-Nsi</strong>, the undead Yuan-ti warlord trying to free Dendar the Night Serpent</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⚠️ Immediate Threats</h3>
+        <ul>
+          <li><span class="badge badge-red">URGENT</span> The Death Curse is spreading — Syndra is dying</li>
+          <li>Mekel (Red Wizard) is still at large after killing Axel — wants to collect the Shambling Mound</li>
+          <li>The Sewn Sisters (3 hags) are allied with Myrkul, god of death</li>
+          <li>The Yuan-ti are actively working to free Dendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📍 Last Known Position</h3>
+        <p>After killing the Froghemoth (Sessions 24-25), the party is heading <strong>south</strong> from the lake with the abandoned fishing village. Axel died in the fight with Mekel (Session 24). The party is at <strong>Level 6</strong>.</p>
+      </div>
+      <div class="card">
+        <h3>🐍 The Big Picture</h3>
+        <ul>
+          <li>A <strong>Soul Monger</strong> device in Omu is harvesting souls of the dead, breaking resurrection magic worldwide</li>
+          <li><strong>Ras-Nsi</strong> (Yuan-ti undead paladin) wants to use this power to free Dendar — a primordial that would eat the sun and end existence</li>
+          <li>Cipher's patron (from the astral plane) wants the Soul Monger and will take Cipher's body when he's done with it</li>
+          <li>The land/continent itself is dying — the soul energy sustains something</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 Notes for Next Session</h3>
+      <ul>
+        <li>Someone else needs a snake bite for travel (it's been only Kragar)</li>
+        <li>Ataaz Kahakla on the map — part of the name means "gorge or canyon" — worth investigating</li>
+        <li>The Ubtao altar orb is embedded in Cipher's hand — need to figure out what "the stone is a weapon" means</li>
+        <li>Question the dead warrior who was with Mekel using Speak with Dead (still possible)</li>
+        <li>Cipher's dangerous/dreadful form — hasn't been fully explored yet</li>
+        <li>Vorn (the Shield Guardian) — Bart is the master, auto-repair is offline</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CHARACTERS -->
+  <section id="characters" class="section">
+    <h2 class="section-title">Player Characters</h2>
+    <div class="grid-2">
+
+      <div class="pc-card">
+        <div class="pc-name">⚔️ Kragar Ironbrand</div>
+        <div class="pc-player">Played by: Dave</div>
+        <div class="pc-class">Oath of Conquest Paladin — Duergar (Deep Dwarf)</div>
+        <div class="pc-alignment"><span class="badge badge-red">Lawful Evil</span></div>
+        <section>
+          <h4>Background</h4>
+          <p>Duergar paladin sworn to <strong>Deep Duerra</strong> (dwarven goddess of conquest and psionics). Wants to collect slaves to please his goddess. Has had two (a goblin and Axel) but both died or escaped. Known as "The Tossing Dwarf" after launching a spirit minion into battle.</p>
+        </section>
+        <section>
+          <h4>Notable Abilities &amp; Items</h4>
+          <span class="tag item">Greataxe (contains elf mage spirit, +flame on 2nd attack)</span>
+          <span class="tag item">Iguana mount (summoned)</span>
+          <span class="tag item">Spirit minions (Gruta's axe, goblin chains, elf mage, human warrior)</span>
+          <span class="tag ability">Snake waypoint tattoos (multiple locations in Chult)</span>
+          <span class="tag ability">Mind Palace (Deep Duerra's realm)</span>
+        </section>
+        <section>
+          <h4>Character Notes</h4>
+          <p>Has been marked twice with rune patterns. Deep Duerra wants Kragar to be calm and emotionless — conquest is a certainty, not a passion. Feels a cold emptiness when he reaches Duerra in prayer.</p>
+        </section>
+      </div>
+
+      <div class="pc-card">
+        <div class="pc-name">🤖 Cipher</div>
+        <div class="pc-player">Played by: Shayen</div>
+        <div class="pc-class">Abjuration Artificer 1 / Wizard 4 / Warlock 1 — Warforged</div>
+        <div class="pc-alignment"><span class="badge badge-green">Neutral Good</span></div>
+        <section>
+          <h4>Background</h4>
+          <p>Warforged from Eberron. Was working on a giant machine when a lich appeared, stole his hourglass core, and transported him to Chult. Wakanga Otamu found and reactivated him. Wants to go home. Found his own memory module at a ruined altar — apparently visited Chult before and doesn't remember it.</p>
+        </section>
+        <section>
+          <h4>Notable Abilities &amp; Items</h4>
+          <span class="tag item">Orb embedded in hand (Ubtao altar orb — weapon?)</span>
+          <span class="tag item">Maze Ball (traverse 1x/day ritual — "Ubtao's Understanding")</span>
+          <span class="tag item">Ring of Lightning Resistance (copper, abjuration)</span>
+          <span class="tag item">Malachite ring w/ light spell (command: Ygga Raxxyg)</span>
+          <span class="tag item">Spellbook (from Wakanga — 15 spells including Tiny Hut, Dimension Door)</span>
+          <span class="tag ability">Undead Warlock pact (new patron from astral realm)</span>
+          <span class="tag ability">Dangerous/Dreadful form (not fully explored)</span>
+          <span class="tag ability">Orb recharge: 1x/day, refreshes closest spellcaster's highest spell slot (up to 3rd)</span>
+        </section>
+        <section>
+          <h4>Patron Deal</h4>
+          <p>Made a pact with a being in the astral realm. She wants: (1) the Soul Monger device, and (2) Cipher's body when he's done with it. She helped him get home and gave him the orb.</p>
+        </section>
+        <section>
+          <h4>Character Notes</h4>
+          <p>Terrible at foraging. Curious about everything. Was created differently from Shayen (Shayen was made by a similar device to the Soul Monger). A lich stole a core from him early in the campaign.</p>
+        </section>
+      </div>
+
+      <div class="pc-card">
+        <div class="pc-name">🎵 Bartholomew Thomas McGregory IV</div>
+        <div class="pc-player">Played by: Chris</div>
+        <div class="pc-class">College of Valor Bard — Human</div>
+        <div class="pc-alignment"><span class="badge badge-blue">Good</span></div>
+        <section>
+          <h4>Background</h4>
+          <p>A drinking, carousing bard who is never serious. Instrument doubles as a phallic club. Was <strong>engaged to Gerta</strong> (second-in-command at Fort Beluarian) — she was memory-wiped by the Nameless along with everyone's memory of Gruta Halsdottir.</p>
+        </section>
+        <section>
+          <h4>Notable Abilities &amp; Items</h4>
+          <span class="tag item">Steve Johnson — +1 Great Club (silver-banded ring on lute, blessed by the Naga)</span>
+          <span class="tag item">Silver ring with golden flame — "G + B - Love Forged in Flame" (from Gruta)</span>
+          <span class="tag ability">Can identify bards and bardic magic</span>
+        </section>
+        <section>
+          <h4>Character Notes</h4>
+          <p>Had a nightmare about teeth that physically hurt him. The Nameless erased everyone's memory of <strong>Gruta Halsdottir</strong> — Bart's battle companion and lover. She saved his life multiple times. Gruta and Flask of Wine were both pulled underground by the Nameless at Camp Vengeance.</p>
+        </section>
+      </div>
+
+      <div class="pc-card">
+        <div class="pc-name">🏹 Ahdran</div>
+        <div class="pc-player">Played by: Scott</div>
+        <div class="pc-class">Beast Master Ranger 5 / Fighter 1 — Human</div>
+        <div class="pc-alignment"><span class="badge badge-blue">Good</span></div>
+        <section>
+          <h4>Background</h4>
+          <p>Member of the <strong>Harpers</strong> (spy/do-gooder organization). Hates the Red Wizards. Had a threatening dream/vision from three golden Harpers holding Rivermist at knifepoint — "We have come for you. We will keep coming for you."</p>
+        </section>
+        <section>
+          <h4>Notable Abilities &amp; Items</h4>
+          <span class="tag item">Fancy Longbow — crits on 18+ (gift from merchant prince via bard artist)</span>
+          <span class="tag item">Spirit Snake Necklace — grants bite attack (boon from the Naga at Orolunga)</span>
+          <span class="tag item">Ring of Wongo — Friend to dinos</span>
+          <span class="tag ability">Bat companions: Foo and Bar</span>
+          <span class="tag ability">Highest passive perception: 17</span>
+        </section>
+        <section>
+          <h4>Character Notes</h4>
+          <p>Received a threatening vision from Harpers — someone in the organization wants him dead or returned. Befriended a Triceratops named "Horny" (it wandered off during a long rest). Has good relationships with NPCs.</p>
+        </section>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:16px; border-left: 3px solid var(--red);">
+      <h3>💀 Axel — Deceased</h3>
+      <p style="color:var(--muted);">Human bladesman, originally a slave traded to the party by Red Wizard Mekel. Wielded a silvered sword. Was part of the party from Sessions 15–24. <strong>Killed by Mekel</strong> in Session 24 during the fight near the Shambling Mound.</p>
+    </div>
+
+    <div class="card" style="margin-top:8px; border-left: 3px solid #555; opacity:0.8;">
+      <h3>👻 Gruta Halsdottir — Missing (Presumed Underground)</h3>
+      <p style="color:var(--muted);">Bart's battle companion and lover. Memory of her was erased by the Nameless at Camp Vengeance. Was pulled underground by the Nameless along with Flask of Wine. Gave Bart a silver ring — "G + B - Love Forged in Flame." She saved Bart's life multiple times.</p>
+    </div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section id="sessions" class="section">
+    <h2 class="section-title">Session Summaries</h2>
+    <p style="color:var(--muted); margin-bottom:20px; font-size:0.88rem;">Click a session to expand. Most recent first.</p>
+
+    <div class="session open" id="s25">
+      <div class="session-header" onclick="toggle('s25')">
+        <div class="session-num">S25</div>
+        <div class="session-title">The Froghemoth Fight — Mar 5</div>
+        <div class="session-date">Mar 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <p>After Session 24's brutal fight with Mekel (which cost Axel his life), the party searched the warrior's corpse. Found: black splint mail, a shield with a golden emblem, a leather sack, a longsword, and a <span class="highlight">magical holy symbol (bone-white metal, Necromancy)</span>.</p>
+        <ul>
+          <li>Traversing a lake, the party was attacked by a <span class="danger">Froghemoth</span> — a massive frog-tentacle monstrosity</li>
+          <li>Cipher and Kragar were <span class="danger">swallowed</span> — Kragar shifted larger and blasted out</li>
+          <li>Party defeated the creature</li>
+          <li>Legend: a Froghemoth named Kubazan is a trickster god — this was <em>not</em> him</li>
+          <li>Party heading south</li>
+        </ul>
+        <p><strong>Next up:</strong> Speak with Dead on the warrior from Mekel's group. Ataaz Kahakla on the map.</p>
+      </div>
+    </div>
+
+    <div class="session" id="s24">
+      <div class="session-header" onclick="toggle('s24')">
+        <div class="session-num">S24</div>
+        <div class="session-title">The Altar, Cipher's Patron, Axel Dies — Feb 26</div>
+        <div class="session-date">Feb 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Found abandoned village with a stone Ubtao altar — glowing orb, offerings (bones)</li>
+          <li>Ahdran found an Eberron memory module; Cipher unlocked it — heard his own voice: "Three weeks since I've been here…"</li>
+          <li>Cipher performed a ritual, traveled to the <span class="highlight">astral plane</span> — met a being who explained the Soul Monger is harvesting souls of an entire plane</li>
+          <li>Cipher made a warlock pact: she gets the Soul Monger + Cipher's body when he's done</li>
+          <li><span class="loot">Orb embedded into Cipher's hand</span> — appears to be a weapon; Cipher has a "dreadful form"</li>
+          <li>Found the abandoned Aldani fishing village (cursed by Ubtao ~100 years ago, turned into crab-creatures)</li>
+          <li>Encountered Mekel (Red Wizard) directing undead near a Shambling Mound</li>
+          <li>Party fought — almost killed Mekel, but he teleported away</li>
+          <li class="danger">⚠️ Axel killed by Mekel during the fight</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s23">
+      <div class="session-header" onclick="toggle('s23')">
+        <div class="session-num">S23</div>
+        <div class="session-title">Shared Dreams, Swamp Troll — Feb 19</div>
+        <div class="session-date">Feb 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Tiny Hut — Shayen/Cipher searches the maze ball. Kragar gets hit by a rainbow, gets a spell slot back</li>
+          <li><span class="loot">Cipher's orb ability confirmed: 1x/day ritual releases energy to refresh closest spellcaster's highest spell slot (up to 3rd level)</span></li>
+          <li>Kragar and Ahdran share a nightmare: dark metal and glass device, pulsing black energy, being pulled toward a hungry void — the Soul Monger</li>
+          <li>Cipher identifies the device from their description as a <strong>Soul Forge</strong> — imbues life (same as what created Shayen)</li>
+          <li>Cipher finds a flask with a pink potion (affects perception — full of energy)</li>
+          <li>Aldani lore: people of Mezro came and fought them; Floating Rock = Heart of Ubtao</li>
+          <li>Kragar summons his iguana mount</li>
+          <li class="highlight">Bart has a nightmare about teeth — it physically hurt him, spits up teeth</li>
+          <li>Party attacked by a swamp troll and some beast — defeated it</li>
+          <li class="loot">Found: non-magical Amulet + small leather waterskin (potion!)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s22">
+      <div class="session-header" onclick="toggle('s22')">
+        <div class="session-num">S22</div>
+        <div class="session-title">Will-o'-Wisps, Snail Shells — Feb 12</div>
+        <div class="session-date">Feb 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Cleanup after fight — boating. Tiny Hut!</li>
+          <li>Found a see-through snail shell husk in the water; Shayen fell in deep water retrieving it</li>
+          <li class="loot">Collected shell husk — Kragar has it (component pouch)</li>
+          <li>River getting smaller. Lightning strike started small fire overnight</li>
+          <li>Noticed glowing orb to east — moved when approached. Then two orbs, drifting</li>
+          <li class="danger">5 undead surrounds the party — will-o'-wisps! Fight ensued</li>
+          <li>Also fought a Shambling Swamp Mound</li>
+          <li>Ghasts = blue triangle on forehead; Wights = blue marking elsewhere</li>
+          <li>Cipher finds a vault door in the maze ball — thinks he found where it stores energy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s21">
+      <div class="session-header" onclick="toggle('s21')">
+        <div class="session-num">S21</div>
+        <div class="session-title">Heading North, Poison Croc — Jan 25</div>
+        <div class="session-date">Jan 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Left Axel's sword to get silvered</li>
+          <li>Met a bard/artist, got portraits made — he magically enhanced the weapons through the process</li>
+          <li class="loot">Ahdran gets fancy new longbow — crits on 18+</li>
+          <li>Back at Thundering Lizard; met Salida and Cura again</li>
+          <li>Headed to snake gate; came out to Grung warriors</li>
+          <li>Guide lore: City of Mezro disappeared — war between Tabaxi city states. Ras-Nsi was a Paladin of Ubtao who walked away from Mezro, raised an army of undead — his fault the city fell</li>
+          <li>Traveling north to retrieve boats; found frog corpse was chewed by a croc that died of the poison</li>
+          <li>Collected frog corpse to distill poison; Salida has a poison vial</li>
+          <li class="danger">Ahdran has a vision: three golden Harpers holding Rivermist at knifepoint — "We have come for you. Nowhere is safe."</li>
+          <li>Headed into the swamp; camped; attacked by undead!</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s20">
+      <div class="session-header" onclick="toggle('s20')">
+        <div class="session-num">S20</div>
+        <div class="session-title">Merchant Prince, Snake Gate — Jan 1</div>
+        <div class="session-date">Jan 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Ahdran speaks with a merchant prince — offered three choices, selects "protection"</li>
+          <li>Bard artist draws Ahdran in a scene</li>
+          <li>Cora (merchant princess Ekene-Afa's husband) delivered the fancy bow</li>
+          <li>Met Salida at Malar's Throat; used the snake pillar (snake gate) tunnel</li>
+          <li>Came out to Grung (frog creature) warriors; party killed them all</li>
+          <li class="loot">Cipher, Salida, Bart get snake tattoos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s19">
+      <div class="session-header" onclick="toggle('s19')">
+        <div class="session-num">S19</div>
+        <div class="session-title">Dendar's Spawn, Snake Portal, Wishing Deal — Jan 1 (cont)</div>
+        <div class="session-date">Jan 2026</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Kragar and Bart each climbed the snake pillar and got additional tattoos; everyone jumped in the hole (except Axel)</li>
+          <li>Found a large circular cavern — something was caged and broke out</li>
+          <li class="danger">Dendar's Spawn — a great black snake, son of the Night Serpent</li>
+          <li>Met <strong>Zalazil the Warden</strong> (half-obsidian djinn) — imprisoned here for eons guarding Dendar's spawn</li>
+          <li>She offers a <span class="highlight">WISH</span> if the party kills/captures the spawn</li>
+          <li>Yuan-ti made portals, came here through the Plane of Earth; black beam from spawn causes petrification</li>
+          <li>Party relayed info to Volo and Wakanga; Wakanga wants to visit the portal</li>
+          <li class="loot">Party got 81 platinum from Volo; went shopping; restocked</li>
+          <li>Cipher learned the sphere absorbs free-flowing magical energy and can be harnessed once unlocked</li>
+          <li>Left for the jungle in 2 days</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s18">
+      <div class="session-header" onclick="toggle('s18')">
+        <div class="session-num">S18</div>
+        <div class="session-title">Yuan-ti Attack Port Nyanzaru — Dec 18</div>
+        <div class="session-date">Dec 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>At the Thundering Lizard with Salida when Yuan-ti attacked — lizards began going berserk</li>
+          <li>Moved to "the Throat" — villagers turned to stone; party "rescued" a child</li>
+          <li class="danger">Snake went into a house — heard "keep them out of the temple"</li>
+          <li>Fought snakes; head Yuan-ti finished a spell creating a new snake portal</li>
+          <li class="danger">Yuan-ti priest grappled Cipher and jumped into the hole with him — Cipher abducted!</li>
+          <li>Party went after them through a burned cavern</li>
+          <li>Fought through yuan-ti creatures underground</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s17">
+      <div class="session-header" onclick="toggle('s17')">
+        <div class="session-num">S17</div>
+        <div class="session-title">The Eclipse, Wakanga's Spellbook — Missed Session</div>
+        <div class="session-date">Dec 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <p><em>(Recap provided by DM)</em></p>
+        <ul>
+          <li>Caught a boat back to Port Nyanzaru</li>
+          <li>Witnessed a strange eclipse — the sun partially obscured by a reptilian pupil looking around</li>
+          <li>Traded Vorn (Shield Guardian) to Wakanga for a jam-packed spellbook and an IOU</li>
+          <li>Long conversation with Wakanga — eclipse is from an old prophecy about Dendar the Night Serpent</li>
+          <li>Tailed by Merchant Prince Jobal's thugs leaving Wakanga's</li>
+          <li>Met Salida at the bar — she shooed away the thugs and joined the party for free</li>
+          <li class="danger">City guard ran in, said Yuan-ti are attacking Malar's Throat, then died of poison</li>
+          <li class="loot">Cipher got spellbook with 15 spells including: Tiny Hut, Dimension Door, Conjure Elemental, Globe of Invulnerability, and more</li>
+          <li>Vorn's memory was scattered — Cipher couldn't repair him without materials</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s16">
+      <div class="session-header" onclick="toggle('s16')">
+        <div class="session-num">S16</div>
+        <div class="session-title">Goblin Queen, Shield Guardian Activated — Nov 13</div>
+        <div class="session-date">Nov 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>On watch Kragar sees Baggy Nanna's ghost</li>
+          <li>Went to the Batiri goblin camp — snuck in badly as usual</li>
+          <li>Found the Shield Guardian (Vorn) at the center of a clearing with offerings — goblins call it the Ant King</li>
+          <li>Queen Grabstab has the amulet — went to university on the Sword Coast</li>
+          <li>Deal: hunt dinosaurs for food and horns in exchange for the amulet</li>
+          <li>Bart did "other services" for the queen</li>
+          <li class="loot">Killed a triceratops — party is now <strong>Level 5!</strong></li>
+          <li class="loot">Got the amulet — Vorn activated! Bart is the new master, can communicate telepathically</li>
+          <li class="loot">Tree Totem — Charm of Restoration (6 charges: 4=Greater Restoration, 2=Lesser Restoration) — Gave to Axel</li>
+          <li>Traveled through the elemental earth plane snake portal tunnel (10 hours) — ended up at Fort Beluarian</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s15">
+      <div class="session-header" onclick="toggle('s15')">
+        <div class="session-num">S15</div>
+        <div class="session-title">Mekel Trades Axel, Wand Monkey, Shield Guardian Found — Nov 6</div>
+        <div class="session-date">Nov 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Mekel (Red Wizard) arrives and offers to trade a slave for the flail snail corpse — party accepts</li>
+          <li class="loot">Axel joins the party — human bladesman, stays quiet; the slave rock allows telepathic communication</li>
+          <li>Mekel teleports out with the snail corpse</li>
+          <li>A Roc nested nearby and flew over</li>
+          <li>Killed a croc — cured Chris (Bart) of throat leeches from earlier</li>
+          <li>Long rested; continued traveling</li>
+          <li class="danger">Fought a mega-gorilla wielding a wand — it exploded and <strong>turned Bart blue!</strong> Lesser Restoration cannot cure it</li>
+          <li>Found a clearing with a statue (adamantine breastplate) and offerings — Cipher identifies it as a <strong>Shield Guardian!</strong></li>
+          <li>Footprints: goblins north, webbed feet west/north</li>
+          <li>Three directions to search: probably dinos, spiders, or goblins — checked goblins first</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s14">
+      <div class="session-header" onclick="toggle('s14')">
+        <div class="session-num">S14</div>
+        <div class="session-title">Flail Snail, Orb Absorbs Magic — Oct 9</div>
+        <div class="session-date">Oct 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Magic collapses into Cipher's orb/backpack — he studies the ball; finds Expeditious Retreat inside and can swap a spell for it</li>
+          <li class="loot">Cipher finds a copper Ring of Lightning Resistance</li>
+          <li>Found a flail snail trail — followed it to a stone obelisk with spiders</li>
+          <li>Met a group of Flaming Fist soldiers — attacked by Allosaurus dinosaurs (the dinos won against the soldiers)</li>
+          <li>Fought crocodiles</li>
+          <li>Fought and killed the <strong>Flail Snail!</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s13">
+      <div class="session-header" onclick="toggle('s13')">
+        <div class="session-num">S13</div>
+        <div class="session-title">Nanny Pu'pu, The Naga at Orolunga — Oct 2</div>
+        <div class="session-date">Oct 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Met <strong>Nanny Pu'pu</strong> in Mbala — a crone who serves Myrkul (old god of death)</li>
+          <li>Her nemesis (the Sewn Sisters) is trying to birth a creature into this world; their master Lord Myrkul gifted a False Hydra</li>
+          <li>The Soul Monger is pulling souls to a device in <strong>Omu</strong> — the ancient capital city, lost in the jungle</li>
+          <li>Pu'pu wants: coins from Widow Groat's eyes, Peggy Dead Bells' necklace of teeth, Baggy Nanna's head</li>
+          <li>Sought Orolunga (ziggurat to the west) — climbed three magical trap-filled levels</li>
+          <li>Met <strong>Saja N'Baza</strong> — ancient Naga at the top, older than Omu</li>
+          <li>Lore: Ras-Nsi (wantee/yuan-ti) seeks "tools" in Omu; the city is sunken below the jungle — must find it from high ground or the air, far to the south</li>
+          <li>Goal: Punish Ras-Nsi. He was once a Paladin of Ubtao who broke his oaths, became yuan-ti, died, and rose again as undead</li>
+          <li class="loot">Boons from the Naga: Kragar gets a new rune pattern (near the port); Ahdran gets the spirit viper necklace (bite attack); Bart's lute gets silver-banded ring — "Steve Johnson will grow large in this world" (+1 Great Club); Cipher was offered to be patron (he accepted)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s12">
+      <div class="session-header" onclick="toggle('s12')">
+        <div class="session-num">S12</div>
+        <div class="session-title">Mbala, The Horror in the Depths, Hags Revealed — Sept 4</div>
+        <div class="session-date">Sept 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Aldani Basin area — lobster-beast creatures (the cursed Aldani people)</li>
+          <li>Sewn Sisters identified: <strong>Widow Groat</strong> (coin eyes), <strong>Peggy Dead Bells</strong> (necklace of children's teeth), <strong>Baggy Nanna</strong> (leather sack sewn over head, 3 animals inside)</li>
+          <li>Climbing to Mbala plateau — rusted gates, piles of gnawed human skulls, rotting village, hut with skeletons</li>
+          <li>Found the creature — it's <strong>Nanny Pu'pu</strong></li>
+          <li>Mbala has a floating rock to the east (Heart of Ubtao) and a ziggurat to the west</li>
+          <li>Kragar fell into a hole — failed wisdom save — alone in his Mind Palace with Deep Duerra</li>
+          <li>Deep Duerra warned something from Myrkul's realm is coming; gave Kragar spirit forms: Gruta's axe, goblin chains, elf mage, human warrior</li>
+          <li>Party jumped in after Kragar — they fought in their realm, Kragar in his Mind Palace</li>
+          <li class="loot">Kragar's greataxe confirmed: <strong>contains elf mage spirit, adds flame damage on 2nd attack</strong></li>
+          <li>Defeated the horror; in its mind Kragar saw a crone tell the baby creature "Daddy Myrkul will take care of you; the Sewn Sisters have nothing on you — take the soul monger for me"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s11">
+      <div class="session-header" onclick="toggle('s11')">
+        <div class="session-num">S11</div>
+        <div class="session-title">Camp Vengeance, The Nameless — Aug 28</div>
+        <div class="session-date">Aug 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Traveled to Camp Vengeance — found it in a confusing state. Welcoming but suffering from memory gaps</li>
+          <li>No Commander Breakbone — the lieutenants insist he never existed</li>
+          <li>Cipher snuck into the Command Tent — found 3 scouting reports (East: zombie horde imminent; South: monstrosities and ruins of Mbala; West: endless jungle) + soldier roster with many crossed off</li>
+          <li class="danger"><strong>THE NAMELESS</strong> — a memory-erasing abomination living underground beneath the camp. It sings a song that makes everyone forget it exists and anyone it has taken</li>
+          <li>Undril activates her pendant — creates a 6-foot anti-memory-wipe aura; everyone remembers Gruta Halsdottir and Flask of Wine</li>
+          <li class="danger">The Nameless had already taken Gruta Halsdottir and Flask of Wine underground the night before — everyone forgot</li>
+          <li>Three little girls singing a counter-song: "Where are the daddies? I can't see! Fighting the zombie underneath..."</li>
+          <li class="danger">Kragar grabbed by the Nameless through a hole in the latrine floor and pulled underground — end of session</li>
+          <li>Found silver holy symbol of Torm (Order of the Gauntlet) in a burned building</li>
+          <li>Horny the Triceratops joins the party briefly but later wanders off</li>
+          <li>Bat companions: Foo and Bar — Ahdran's</li>
+          <li>Found a Ring of Wongo (friend to dinos) on a corpse</li>
+          <li class="loot">Party hit Level 3 earlier on this leg; now at Camp Vengeance for a long rest</li>
+        </ul>
+        <p><strong>The Letter:</strong> Head Priestess Kylen Silvertusk warned that "The Nameless" are abominations that consume entire villages/cities, alter memories of anyone who encounters them, and leave no witnesses. Only the defeated ones allow stories to be told.</p>
+      </div>
+    </div>
+
+    <div class="session" id="s10">
+      <div class="session-header" onclick="toggle('s10')">
+        <div class="session-num">S10</div>
+        <div class="session-title">Cursed Camp, Zombie Dwarves, Triceratops Rescue — Aug 28 (cont)</div>
+        <div class="session-date">Aug 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Camp overrun by zombies — found a Alchemy Jug in a temple (magic item!)</li>
+          <li>Found Silver holy symbol of Torm in a burned building</li>
+          <li>Long rest interrupted by zombie dwarves — they had plants controlling them (yellow flowers)</li>
+          <li>Found a corpse with 7 rations, insect repellent (17 uses), and an ivy ring</li>
+          <li class="loot">Ring of Wongo (friend to dinos) found on a corpse</li>
+          <li>Ahdran got bat companions: Foo and Bar</li>
+          <li>Rescued a Triceratops from zombies — named it "Horny"</li>
+          <li>Found snake waypoint cave (Yaunti totem) — Kragar touched snake fang, got magical tattoo = waypoint system</li>
+          <li class="loot">Lightning mangoes from a struck tree: grant 1d10 lightning damage on next melee attack — 3 remaining!</li>
+          <li>Made it to Camp Vengeance</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s9">
+      <div class="session-header" onclick="toggle('s9')">
+        <div class="session-num">S9</div>
+        <div class="session-title">River Run, Magic Ring, Zombie Dwarves — Earlier</div>
+        <div class="session-date">Summer 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Ran from a dinosaur to the river — left a glowing arrow for Kragar</li>
+          <li class="loot">Cipher's malachite ring: light spell, command word "Ygga Raxxyg" — Ring of Wongo (friend to dinos, monkey shape)</li>
+          <li>Foraged 2 rations. Long rest interrupted by zombie dwarves with plant-control flowers!</li>
+          <li>Cipher yanked into the depths by something in the river</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s8">
+      <div class="session-header" onclick="toggle('s8')">
+        <div class="session-num">S8</div>
+        <div class="session-title">Maze Orb Unlocked, Pontificus, T-Rex of Doom — Earlier</div>
+        <div class="session-date">Summer 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Cipher learns to use maze ball: 1x/day, INT check, saw a glowing light inside</li>
+          <li>Found a human tied to a post covered in honey — Pontificus "The Spectacular" Hipomtum — untied him</li>
+          <li>Goblin attack! Green meteor = goblin hut. Named a captured goblin Bocefus (it's Vocifus)</li>
+          <li>Found glowing stones — Chuinga forest spirits!</li>
+          <li>Cipher unlocked magic from the orb — "Ubtau's Understanding": advantage on one INT or WIS check/save. Orb isn't actively drawing magic</li>
+          <li>Forest spirits gave Kragar a bracelet</li>
+          <li class="danger">Found a dead dino with something shiny → UNDEAD T-REX full of zombies! The party ran. Bart nearly bitten in half. Fog cloud escape.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s7">
+      <div class="session-header" onclick="toggle('s7')">
+        <div class="session-num">S7</div>
+        <div class="session-title">Level 3, Leech Pond, Maze Ball Found — Jul 8</div>
+        <div class="session-date">Jul 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Traveled east side of river — fought 12 undead zombies and skeletons overnight</li>
+          <li>Ice circle in the jungle — unknown source</li>
+          <li>Found stone labyrinth circle; Cipher solved it — underground tomb "Ubtao's Rest" opened</li>
+          <li class="loot"><strong>Long Rest — Level 3!</strong></li>
+          <li>Cipher hears "Curious" in the expanded maze during meditation</li>
+          <li>Kragar swears his oath to Deep Duerra — she wants him calm and emotionless. "Curious" also watches him</li>
+          <li>Found a magic leech pool (drains spell slots!) — Bart dove in anyway and recovered his</li>
+          <li class="loot">Bart recovers with a crystal/obsidian orb with maze markings = the <strong>Maze Ball!</strong> Cipher attunes to it</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s6">
+      <div class="session-header" onclick="toggle('s6')">
+        <div class="session-num">S6</div>
+        <div class="session-title">Fort Beluarian Jousting Distraction — Earlier</div>
+        <div class="session-date">Summer 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Jousting tournament as a distraction — won! Ahdran beat the champion 3-2 (unhorsed)</li>
+          <li>Cipher jammed the door to the officers' quarters during the distraction</li>
+          <li>Roka confirmed: Commander Lyara is in league with pirates (found a sending stone)</li>
+          <li class="loot">Party gets a Writ of Exploration (60 days)</li>
+          <li>Returned to Port Nyanzaru — Syndra is visibly ill</li>
+          <li>Syndra explains the <strong>Death Curse</strong>: anyone brought back from the dead is now dying again; raise dead magic doesn't work</li>
+          <li>The Soul Monger artifact in Chult is causing this; Syndra herself was raised and is dying</li>
+          <li>Deep Duerra confirms prayer feels cold and empty (the death curse)</li>
+          <li>Party hires River and Flask as guides; heads into the jungle</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s5">
+      <div class="session-header" onclick="toggle('s5')">
+        <div class="session-num">S5</div>
+        <div class="session-title">Fort Beluarian, Meet the Commander — Earlier</div>
+        <div class="session-date">Summer 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Found a corpse on the trail: 4 silvered arrows, obsidian dagger (20gp), vial of caustic poison</li>
+          <li>Arrived at Fort Beluarian — met 2nd in Command Gerta, Commander Lyara Portier ("The Blaze")</li>
+          <li>Met Shago — a very brave guide (5gp/day)</li>
+          <li>Bart tried to pick up Gerta — denied (for now)</li>
+          <li>Bounty on ghoul heads. Scout report: large tracks south</li>
+          <li>Jobs offered: investigate large tracks south (5 enchanted arrows for explanation + evidence)</li>
+          <li>Albino dwarves bring iron to the fort from mines 10 miles east</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="session" id="s4s3">
+      <div class="session-header" onclick="toggle('s4s3')">
+        <div class="session-num">S1–4</div>
+        <div class="session-title">Port Nyanzaru, Dino Races, Into the Jungle</div>
+        <div class="session-date">Early 2025</div>
+        <div class="session-arrow">▶</div>
+      </div>
+      <div class="session-body">
+        <ul>
+          <li>Arrived at Port Nyanzaru on the Brazen Pegasus — fought a Plesiosaurus and a Dragon Turtle</li>
+          <li>Volo revealed as the mysterious cartographer — wants the party to map Chult</li>
+          <li>Cipher was revived by Wakanga Otamu; a lich had stolen his core on Eberron and transported him here</li>
+          <li>Met the 7 Merchant Princes; learned the lay of the land</li>
+          <li><strong>Dino races!</strong> Ahdran won riding Silvana's Gift (hadrosaur). Prizes: key to port, ring with maze (survival/animal handling advantage), 4 bath passes, 10 gems (10gp each), invited to dine with Kwayothe</li>
+          <li>Wakanga's quest: find Vorn (Shield Guardian) and its control amulet — offers magical training + spellbook in exchange</li>
+          <li>Roka's quest: create a distraction at Fort Beluarian (suspects Flaming Fist in league with pirates)</li>
+          <li>Syndra's quest: find the Soul Monger. She gave the party an incredibly valuable map (people will kill for it)</li>
+          <li>Undril Silvertusk (Order of the Gauntlet) joined the party heading to Camp Vengeance/Righteous</li>
+          <li>Left town with River and Flask as guides</li>
+          <li>Encountered 20 blue-triangle undead attacking a brontosaurus on Day 1</li>
+          <li>Fought hags by a river; found Yuan-ti carved stone</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- NPCS -->
+  <section id="npcs" class="section">
+    <h2 class="section-title">NPCs &amp; Factions</h2>
+
+    <h3 style="color:var(--green); margin-bottom:12px; font-size:0.95rem;">✅ Allies</h3>
+    <div class="npc-grid" style="margin-bottom:28px;">
+      <div class="npc-card ally">
+        <div class="npc-name">Wakanga Otamu</div>
+        <div class="npc-role">Wizard / Merchant Prince — Port Nyanzaru</div>
+        <p>Revived Cipher and is friendly to the party. Offered magical training for finding Vorn. Now has Vorn and is tinkering with him. Gave Cipher a spellbook with 15 spells.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Volo</div>
+        <div class="npc-role">Cartographer / Author</div>
+        <p>The party's employer. Wants them to map Chult for his next book. Pays for useful info — gave the party 81 platinum. Revealed himself dramatically as the cartographer on the Brazen Pegasus.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Syndra</div>
+        <div class="npc-role">Wizard — dying from Death Curse</div>
+        <p>Was previously raised from the dead, now dying from the Death Curse. Commissioned the party to find the Soul Monger. Gave them an incredibly valuable map. Working with a Harper agent.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Salida</div>
+        <div class="npc-role">Guide — joined for free</div>
+        <p>Skilled jungle guide. Got so intrigued by the party's mission she joined for no fee. She has a poison vial. Knows the jungle well.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Undril Silvertusk</div>
+        <div class="npc-role">Order of the Gauntlet — Half-Orc Paladin</div>
+        <p>Daughter of Head Priestess Kylen Silvertusk. Sent to deliver messages to Commander Breakbone (who the Nameless erased from memory). Has a pendant that creates a 6-ft anti-memory-wipe aura.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Nanny Pu'pu</div>
+        <div class="npc-role">Crone — Mbala</div>
+        <p>Unusual ally. Serves Myrkul but hates the Sewn Sisters. Wants the Sisters' tokens (Widow Groat's coins, Peggy's teeth necklace, Baggy Nanna's head) in exchange for information about Omu.</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Saja N'Baza</div>
+        <div class="npc-role">Ancient Naga — Orolunga Ziggurat</div>
+        <p>Ancient being older than Omu. Gave the party information about Ras-Nsi and Omu. Gave each PC a boon. Offered Cipher a patron role (which he accepted).</p>
+      </div>
+      <div class="npc-card ally">
+        <div class="npc-name">Zalazil the Warden</div>
+        <div class="npc-role">Half-Obsidian Djinn — Underground</div>
+        <p>Has been guarding Dendar's Spawn for eons. Offered the party a WISH if they kill/capture the Spawn. Is in the Plane of Earth — "Do not be there, it can see you."</p>
+      </div>
+      <div class="npc-card ally" style="opacity:0.7;">
+        <div class="npc-name">River Mist &amp; Flask of Wine</div>
+        <div class="npc-role">Guides — MISSING</div>
+        <p>Original guides. Flask of Wine was pulled underground by the Nameless at Camp Vengeance (along with Gruta). River Mist is presumably still with the party (or also taken?).</p>
+      </div>
+      <div class="npc-card ally" style="opacity:0.7;">
+        <div class="npc-name">Gruta Halsdottir</div>
+        <div class="npc-role">Warrior — MISSING (pulled underground)</div>
+        <p>Bart's lover and battle companion. Memories of her were erased by the Nameless. Pulled underground at Camp Vengeance. Gave Bart a silver ring — "G + B - Love Forged in Flame." Saved Bart's life multiple times.</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--red); margin-bottom:12px; font-size:0.95rem;">⚔️ Enemies</h3>
+    <div class="npc-grid" style="margin-bottom:28px;">
+      <div class="npc-card enemy">
+        <div class="npc-name">Ras-Nsi</div>
+        <div class="npc-role">Yuan-Ti Undead Warlord — Main Villain</div>
+        <p>Former Paladin of Ubtao who broke his oaths, abandoned Mezro in its hour of need, raised an undead army, became Yuan-ti, died, and rose again as undead. Now seeks to use the Soul Monger to free Dendar the Night Serpent.</p>
+      </div>
+      <div class="npc-card enemy">
+        <div class="npc-name">Mekel</div>
+        <div class="npc-role">Red Wizard of Thay</div>
+        <p>Has repeatedly antagonized the party. Killed Axel in Session 24. Was trying to capture a Shambling Mound (possibly for the Heart of Ubtao). Teleports away when near defeat. Still at large.</p>
+      </div>
+      <div class="npc-card enemy">
+        <div class="npc-name">The Sewn Sisters</div>
+        <div class="npc-role">Three Hags — Allied with Myrkul</div>
+        <p><strong>Widow Groat</strong> (coin eyes), <strong>Peggy Dead Bells</strong> (necklace of children's teeth), <strong>Baggy Nanna</strong> (leather sack over head, 3 animals inside). Allies of Myrkul. Have a creature they're trying to birth into the world — Myrkul says it will end all life.</p>
+      </div>
+      <div class="npc-card enemy">
+        <div class="npc-name">The Nameless</div>
+        <div class="npc-role">Memory-Erasing Abomination — Camp Vengeance</div>
+        <p>Abomination that lives underground. Sings a song that makes everyone forget it and anyone it takes. Has taken Gruta, Flask, and Kragar. Leaves no witnesses normally — only defeated ones allow stories to be told.</p>
+      </div>
+      <div class="npc-card enemy">
+        <div class="npc-name">Dendar's Spawn</div>
+        <div class="npc-role">Great Black Snake — Son of the Night Serpent</div>
+        <p>Son of Dendar, imprisoned for millennia. The Yuan-ti found and want to free it. Black beam from its eyes causes petrification. Caged in the Plane of Earth.</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--muted); margin-bottom:12px; font-size:0.95rem;">⚖️ Neutral / Merchant Princes</h3>
+    <div class="npc-grid">
+      <div class="npc-card neutral">
+        <div class="npc-name">Jobal</div>
+        <div class="npc-role">Merchant Prince — Guides &amp; Mercenaries</div>
+        <p>Suspicious of the party. Had them followed (Jobal's thugs). Thinks they hired an unaffiliated guide. Controls guide licensing — BBB rule: non-sanctioned guides are Beaten, Blinded, Beheaded.</p>
+      </div>
+      <div class="npc-card neutral">
+        <div class="npc-name">Kwayothe</div>
+        <div class="npc-role">Merchant Prince — Fruits, Wines, Insect Repellent</div>
+        <p>Invited the party to dine after the dino race. Sells tesh (honey mead from giant wasps), incense, insect repellent.</p>
+      </div>
+      <div class="npc-card neutral">
+        <div class="npc-name">Zindar</div>
+        <div class="npc-role">Harbormaster — Not quite a dragonborn</div>
+        <p>Manages the docks at Port Nyanzaru. $2K reward for a pirate ship or 500/head for pirate captains (dead or alive, bring a preserved head).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LORE -->
+  <section id="lore" class="section">
+    <h2 class="section-title">World Lore &amp; Factions</h2>
+
+    <div class="lore-block">
+      <h3>🌙 The Death Curse</h3>
+      <p>A plague spreading across the world. Anyone who was previously raised from the dead is now actually dying again. The magic to bring people back from death no longer works. Caused by the <strong>Soul Monger</strong> artifact somewhere in Chult, which harvests the souls of the dead for an unknown entity. Syndra (who was previously raised) is dying because of it. The entire land/continent of Chult is dying as its soul-energy is consumed.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🐍 Dendar the Night Serpent</h3>
+      <p>An ancient Primordial entity — the opposite of Ubtao (god of Chult). Imprisoned since before recorded history. It is prophesied that Dendar will one day break free and swallow the sun, ending this plane of existence. During a recent eclipse, her eye appeared in the sky — a reptilian pupil looking around. Ras-Nsi and the Yuan-ti are trying to free her. Her Spawn is imprisoned in the Plane of Earth.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🏛️ Ubtao</h3>
+      <p>Creator god of Chult. The dinos are called "Children of Ubtao." Made the maze system (maze balls connect to Ubtao's understanding). The Aldani people were cursed by Ubtao and turned into crab-creatures. The Heart of Ubtao is a floating rock structure near Mbala. There are snake waypoint pillars throughout Chult — touching the fang gives a tattoo/waypoint. The Naga Saja N'Baza served Ubtao.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🐍 The Yuan-Ti (Wantee)</h3>
+      <p>Snake-people who serve Ras-Nsi. Can create magical portals connecting to the Plane of Earth. Led by Ras-Nsi, an undead yuan-ti who was once a Paladin of Ubtao. Attacked Port Nyanzaru. The ancient carved stones with snake symbols are their markers. Their portals allowed them to find Dendar's Spawn's prison.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🧙 Red Wizards of Thay</h3>
+      <p>Have a base of operations at the Heart of Ubtao. Mekel is their representative in Chult. Were involved in capturing Axel (who was teleported from the Heart of Ubtao). Interested in the Shambling Mounds. Ahdran hates them (Harper allegiance). Red Wizards had explored and mapped Chult previously — "so many wizards in Chult."</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🔑 The Maze / Ubtao's Understanding</h3>
+      <p>A recurring motif. The maze ball Cipher carries connects to something deeper. Cipher heard "Curious" twice during meditation — an entity watching him. The maze ball allows: 1x/day ritual traverse (10 min), found Expeditious Retreat inside it, has a vault door where energy is stored. The ring from the dino race had a maze on it. The stone labyrinth in the jungle led to a tomb. There's "more to find" per the blessing received.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🗺️ The City of Omu</h3>
+      <p>Ancient capital city of Chult. Lost in the jungle, sunken below the canopy. Can only be spotted from high ground or the air. Located far to the south. Contains the Soul Monger device. Nanny Pu'pu knows someone who might know where it is. The Sewn Sisters are "all over that area." Known also as the "Peaks of Flame and Valley of Lost Honor."</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🦅 Factions in Chult</h3>
+      <ul>
+        <li><strong>The Harpers</strong> — Ahdran's faction. Syndra's ally is a Harper. Someone in the Harpers wants Ahdran dead or captured.</li>
+        <li><strong>Order of the Gauntlet</strong> — Undril Silvertusk's faction. Worship Torm and Tyr. Camps: Vengeance and Righteous.</li>
+        <li><strong>Flaming Fist</strong> — Run Fort Beluarian. Commander Lyara was in league with pirates.</li>
+        <li><strong>Merchant Princes</strong> — 7 merchant princes control Port Nyanzaru (Wakanga, Jobal, Kwayothe, Ekene-Afa, Efon Talroa, Jesamine, Johnthe).</li>
+        <li><strong>Pirates</strong> — Based at Jahaka Anchorage. Sell slaves. Were in league with Flaming Fist command.</li>
+        <li><strong>Batiri Goblins</strong> — Various tribes. Biting Ant Tribe had the Shield Guardian amulet. Queen Grabstab educated on Sword Coast.</li>
+      </ul>
+    </div>
+
+    <div class="lore-block">
+      <h3>🗝️ Snake Waypoint System</h3>
+      <p>Snake pillars (Yaunti/Ubtao origin) are scattered throughout Chult. Touch the fang → receive a magical tattoo with the location's unique runes. Line up symbols on the pillar for the destination → portal opens. Kragar has multiple waypoints tattooed. The Yaunti also use these portals (and have additional "corridor" branches). One portal goes near the port; another is in the area north of the goblin camp.</p>
+    </div>
+  </section>
+
+  <!-- INVENTORY -->
+  <section id="inventory" class="section">
+    <h2 class="section-title">Party Inventory &amp; Magic Items</h2>
+
+    <div class="inv-section">
+      <h3>🔮 Magic Items — Cipher</h3>
+      <div class="inv-item">
+        <div class="owner">Cipher</div>
+        <div class="item-name">Ubtao Altar Orb (embedded in hand)</div>
+        <div class="item-desc">1x/day ritual: releases energy to refresh the closest spellcaster's highest spell slot (up to 3rd level). Appears to be a weapon. Connected to Cipher's dreadful form.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Cipher</div>
+        <div class="item-name">Maze Ball</div>
+        <div class="item-desc">1x/day 10-minute ritual to traverse the maze. Found Expeditious Retreat inside. Has a vault door (energy storage). "Ubtau's Understanding" — advantage on INT/WIS checks. Something watches through it ("Curious").</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Cipher</div>
+        <div class="item-name">Ring of Lightning Resistance</div>
+        <div class="item-desc">Copper ring with abjuration magic.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Cipher</div>
+        <div class="item-name">Malachite Ring</div>
+        <div class="item-desc">Light spell, command word: "Ygga Raxxyg" — 20 ft radius bright light.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Cipher</div>
+        <div class="item-name">Spellbook (from Wakanga)</div>
+        <div class="item-desc">15 spells: Unseen Servant, Tasha's Hideous Laughter, Chromatic Orb, Magic Missile (L1); Arcane Lock (L2); Leomund's Tiny Hut, Vampiric Touch (L3); Phantasmal Killer, Dimension Door (L4); Immolation, Wall of Light, Conjure Elemental, Skill Empowerment (L5); Magic Jar, Globe of Invulnerability (L6).</div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <h3>⚔️ Magic Items — Kragar</h3>
+      <div class="inv-item">
+        <div class="owner">Kragar</div>
+        <div class="item-name">Spirit Greataxe</div>
+        <div class="item-desc">Contains the spirit of an elf mage. Adds flame damage on the 2nd attack. Contains Gruta's axe, goblin chains spirits as well.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Kragar</div>
+        <div class="item-name">Snake Waypoint Tattoos</div>
+        <div class="item-desc">Multiple Chult locations. Uses snake pillars to portal between waypoints.</div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <h3>🏹 Magic Items — Ahdran</h3>
+      <div class="inv-item">
+        <div class="owner">Ahdran</div>
+        <div class="item-name">Fancy Longbow (Silvana's Gift)</div>
+        <div class="item-desc">Critical hits on 18+. Gift from merchant prince, crafted by the bard-artist in Port Nyanzaru.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Ahdran</div>
+        <div class="item-name">Spirit Snake Necklace</div>
+        <div class="item-desc">Living spirit necklace. Grants a bite attack. Boon from Saja N'Baza (the Naga at Orolunga).</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Ahdran</div>
+        <div class="item-name">Ring of Wongo</div>
+        <div class="item-desc">Monkey-shaped ring. Friend to dinosaurs.</div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <h3>🎵 Magic Items — Bart</h3>
+      <div class="inv-item">
+        <div class="owner">Bart</div>
+        <div class="item-name">Steve Johnson (+1 Great Club)</div>
+        <div class="item-desc">Lute with silver-banded ring. Blessed by Saja N'Baza: "Steve Johnson will grow large in this world." +1 magical great club.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Bart</div>
+        <div class="item-name">Silver Ring (from Gruta)</div>
+        <div class="item-desc">Silver ring with golden flame. Carved inside: "G + B - Love Forged in Flame."</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Bart</div>
+        <div class="item-name">Vorn (Shield Guardian)</div>
+        <div class="item-desc">Bart is the master. Can communicate telepathically. Auto-repair functions offline. Currently with Wakanga who is tinkering with it.</div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <h3>🎒 Party / Shared Items</h3>
+      <div class="inv-item">
+        <div class="owner">Party</div>
+        <div class="item-name">Lightning Mangoes (×3)</div>
+        <div class="item-desc">From a lightning-struck tree. Grant 1d10 lightning damage on the next melee attack.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Kragar</div>
+        <div class="item-name">Snail Shell Husk</div>
+        <div class="item-desc">Collected from the lake area. Used as component pouch material.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Party</div>
+        <div class="item-name">Insect Repellent</div>
+        <div class="item-desc">~100 applications remaining (24-hour vials). Essential in the jungle.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Party</div>
+        <div class="item-name">Wild Root (×1)</div>
+        <div class="item-desc">Can cure poison.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Axel (now party)</div>
+        <div class="item-name">Charm of Restoration</div>
+        <div class="item-desc">6 charges total: 4 charges = Greater Restoration, 2 charges = Lesser Restoration. No way to restore charges. Was in Axel's inventory.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Party</div>
+        <div class="item-name">Alchemy Jug</div>
+        <div class="item-desc">Magic item. Found in a temple during the zombie camp assault.</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">Party</div>
+        <div class="item-name">Mystery Pink Potion</div>
+        <div class="item-desc">Wax-sealed flask found by Cipher. Affects perception — "feel full of energy."</div>
+      </div>
+      <div class="inv-item">
+        <div class="owner">New (Sess 25)</div>
+        <div class="item-name">Warrior's Loot (from Mekel's bodyguard)</div>
+        <div class="item-desc">Black splint mail, shield w/ golden emblem, leather sack, longsword, bone-white holy symbol (Magical, Necromancy) — still being attuned/investigated.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<script>
+  // Tab navigation
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sec = link.dataset.section;
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById(sec).classList.add('active');
+    });
+  });
+
+  // Session accordion
+  function toggle(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
